@@ -19,6 +19,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        view()->composer('*', function ($view) {
+            try {
+                $view->with('globalSchoolSetting', \App\Models\SchoolSetting::getSettings());
+            } catch (\Throwable $e) {
+                $view->with('globalSchoolSetting', null);
+            }
+        });
     }
 }
