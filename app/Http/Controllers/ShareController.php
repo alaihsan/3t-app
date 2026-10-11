@@ -69,7 +69,7 @@ class ShareController extends Controller
             'totalSurahsTouched',
             'gradeCounts',
             'juzStats'
-        ));
+        ) + ['totalQuranVerses' => Student::TOTAL_QURAN_VERSES]);
     }
 
     /**
@@ -142,8 +142,7 @@ class ShareController extends Controller
         })->values();
 
         $totalVersesMemorized = $records->count();
-        $totalQuranVerses = 6236;
-        $totalPercentage = round(($totalVersesMemorized / $totalQuranVerses) * 100, 2);
+        $totalPercentage = round(($totalVersesMemorized / Student::TOTAL_QURAN_VERSES) * 100, 2);
 
         return response()->json([
             'status' => 'success',

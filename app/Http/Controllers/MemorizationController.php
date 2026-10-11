@@ -24,8 +24,7 @@ class MemorizationController extends Controller
             $gradeLevel = '7';
         }
 
-        $allClasses = ['7A', '7B', '7C', '7D', '8A', '8B', '8C', '8D', '9A', '9B', '9C', '9D'];
-        $classesInLevel = array_values(array_filter($allClasses, fn($c) => str_starts_with($c, $gradeLevel)));
+        $classesInLevel = array_values(array_filter(Student::CLASSES, fn($c) => str_starts_with($c, $gradeLevel)));
 
         $selectedClass = $request->input('class_name', $classesInLevel[0] ?? '7A');
         if (!in_array($selectedClass, $classesInLevel)) {

@@ -26,7 +26,7 @@ class SettingController extends Controller
             'teacher_takhassus' => 'nullable|string|max:255',
             'teacher_tahsin' => 'nullable|string|max:255',
             'teacher_tahfizh' => 'nullable|string|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp,svg|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         $setting = SchoolSetting::getSettings();
@@ -50,6 +50,9 @@ class SettingController extends Controller
 
             $file = $request->file('logo');
             $fileName = 'school_logo_' . time() . '.' . $file->getClientOriginalExtension();
+            if (!is_dir(public_path('uploads'))) {
+                mkdir(public_path('uploads'), 0755, true);
+            }
             $file->move(public_path('uploads'), $fileName);
             $data['logo_path'] = 'uploads/' . $fileName;
         }

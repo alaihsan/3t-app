@@ -72,7 +72,7 @@
         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm text-center">
             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Ayat Dihafal</span>
             <div class="text-2xl font-extrabold text-emerald-700 mt-1">{{ $stats['total_verses'] }}</div>
-            <span class="text-[11px] text-slate-400">dari 6.236 ayat Al-Qur'an</span>
+            <span class="text-[11px] text-slate-400">dari {{ number_format(\App\Models\Student::TOTAL_QURAN_VERSES) }} ayat Al-Qur'an</span>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm text-center">
             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Surah Disetor</span>

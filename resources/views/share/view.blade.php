@@ -77,7 +77,7 @@
 
         <!-- Stats Grid -->
         @php
-            $percentageTotal = min(100, round(($totalVersesMemorized / 6236) * 100, 2));
+            $percentageTotal = min(100, round(($totalVersesMemorized / $totalQuranVerses) * 100, 2));
             arsort($gradeCounts);
             $dominantGrade = !empty($gradeCounts) ? array_key_first($gradeCounts) : '-';
         @endphp

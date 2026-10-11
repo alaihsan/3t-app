@@ -99,7 +99,7 @@ class DashboardController extends Controller
             ->get()
             ->map(function ($student) {
                 $totalVerses = $student->memorization_records_count;
-                $percentage = min(100, round(($totalVerses / 6236) * 100, 1));
+                $percentage = min(100, round(($totalVerses / Student::TOTAL_QURAN_VERSES) * 100, 1));
                 
                 // Last memorized surah
                 $lastRecord = MemorizationRecord::where('student_id', $student->id)
