@@ -26,10 +26,10 @@
     </div>
 
     <!-- Format Guide -->
-    <div class="bg-amber-50 rounded-2xl p-4 border border-amber-200 text-amber-900 text-xs">
-        <div class="space-y-1">
-            <p class="font-bold text-sm">Petunjuk Format Kolom Excel:</p>
-            <p>Susunan kolom pada file Excel/Spreadsheet Anda berurutan <strong>5 kolom</strong> sebagai berikut:</p>
+    <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-sm">
+        <x-collapsible-panel trigger="Lihat Format Kolom Excel">
+            <div class="bg-amber-50 rounded-xl p-4 border border-amber-200 text-amber-900 text-xs space-y-1">
+                <p>Susunan kolom pada file Excel/Spreadsheet Anda berurutan <strong>5 kolom</strong> sebagai berikut:</p>
                 <div class="overflow-x-auto py-2">
                     <table class="bg-white border border-amber-200 rounded-lg text-left text-[11px] font-mono">
                         <tr class="bg-amber-100/60 font-bold text-amber-950">
@@ -50,7 +50,7 @@
                 </div>
                 <p class="text-slate-600 text-[11px]">Catatan: Jika murid mengikuti lebih dari 1 program (multi-kategori), pisahkan dengan koma pada kolom 5 (contoh: <code>Tahsin, Tahfizh</code>).</p>
             </div>
-        </div>
+        </x-collapsible-panel>
     </div>
 
     <!-- Paste Form & Live Preview -->

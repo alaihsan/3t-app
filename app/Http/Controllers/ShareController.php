@@ -6,6 +6,9 @@ use App\Models\MemorizationRecord;
 use App\Models\SchoolSetting;
 use App\Models\Student;
 use App\Models\Surah;
+use App\Services\QuranProgressService;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,6 +23,10 @@ class ShareController extends Controller
     {
         $student = Student::where('share_token', $share_token)->firstOrFail();
         $setting = SchoolSetting::getSettings();
+
+        if ($this->pinRequired($student) && !$this->isUnlocked($request, $student)) {
+            return view('share.pin-gate', compact('student', 'setting'));
+        }
 
         $records = MemorizationRecord::where('student_id', $student->id)
             ->with('surah')
@@ -65,7 +72,27 @@ class ShareController extends Controller
             'totalSurahsTouched',
             'gradeCounts',
             'juzStats'
-        ));
+        ) + ['totalQuranVerses' => Student::TOTAL_QURAN_VERSES]);
+    }
+
+    /**
+     * Verify PIN submitted from the pin-gate form and unlock the share view for this session.
+     */
+    public function verifyPin(string $share_token, Request $request): RedirectResponse
+    {
+        $student = Student::where('share_token', $share_token)->firstOrFail();
+
+        $request->validate([
+            'pin' => ['required', 'string'],
+        ]);
+
+        if (!$this->pinRequired($student) || $request->input('pin') !== $student->access_pin) {
+            return back()->withErrors(['pin' => 'PIN yang Anda masukkan salah.']);
+        }
+
+        $request->session()->put("share_unlocked_{$student->id}", true);
+
+        return redirect()->route('share.view', $student->share_token);
     }
 
     /**
@@ -80,6 +107,13 @@ class ShareController extends Controller
                 'status' => 'error',
                 'message' => 'Murid tidak ditemukan atau token tidak valid.',
             ], 404);
+        }
+
+        if ($this->pinRequired($student) && $request->query('pin') !== $student->access_pin) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'PIN akses diperlukan atau tidak valid.',
+            ], 401);
         }
 
         $setting = SchoolSetting::getSettings();
@@ -111,8 +145,7 @@ class ShareController extends Controller
         })->values();
 
         $totalVersesMemorized = $records->count();
-        $totalQuranVerses = 6236;
-        $totalPercentage = round(($totalVersesMemorized / $totalQuranVerses) * 100, 2);
+        $totalPercentage = round(($totalVersesMemorized / Student::TOTAL_QURAN_VERSES) * 100, 2);
 
         return response()->json([
             'status' => 'success',
@@ -138,5 +171,65 @@ class ShareController extends Controller
             'detail_hafalan_per_surah' => $groupedBySurah,
             'generated_at' => now()->toIso8601String(),
         ]);
+    }
+
+    /**
+     * Daftar surah untuk dibaca dari sisi orang tua (gated by PIN seperti view()).
+     */
+    public function quranIndex(string $share_token, Request $request): View
+    {
+        $student = Student::where('share_token', $share_token)->firstOrFail();
+        $setting = SchoolSetting::getSettings();
+
+        if ($this->pinRequired($student) && !$this->isUnlocked($request, $student)) {
+            return view('share.pin-gate', compact('student', 'setting'));
+        }
+
+        $surahs = Surah::orderBy('number')->get();
+
+        return view('share.quran-index', compact('student', 'setting', 'surahs'));
+    }
+
+    /**
+     * Baca satu surah untuk murid di balik token share, dengan progres hafalan
+     * murid itu otomatis ter-highlight. $student SELALU diturunkan dari
+     * share_token, TIDAK PERNAH dari parameter request lain - jangan ubah ini,
+     * supaya pengunjung tidak bisa melihat hafalan murid lain lewat URL.
+     */
+    public function quranShow(string $share_token, int $number, Request $request, QuranProgressService $quranProgress): View
+    {
+        $student = Student::where('share_token', $share_token)->firstOrFail();
+        $setting = SchoolSetting::getSettings();
+
+        if ($this->pinRequired($student) && !$this->isUnlocked($request, $student)) {
+            return view('share.pin-gate', compact('student', 'setting'));
+        }
+
+        $surah = Surah::where('number', $number)->firstOrFail();
+
+        try {
+            $data = $quranProgress->buildReadingData($surah, $student);
+        } catch (RequestException|ConnectionException $e) {
+            return view('share.quran-show', [
+                'surah' => $surah,
+                'verses' => [],
+                'memorizedVerses' => [],
+                'student' => $student,
+                'setting' => $setting,
+                'unavailable' => true,
+            ]);
+        }
+
+        return view('share.quran-show', [...$data, 'student' => $student, 'setting' => $setting, 'unavailable' => false]);
+    }
+
+    private function pinRequired(Student $student): bool
+    {
+        return filled($student->access_pin);
+    }
+
+    private function isUnlocked(Request $request, Student $student): bool
+    {
+        return $request->session()->get("share_unlocked_{$student->id}") === true;
     }
 }

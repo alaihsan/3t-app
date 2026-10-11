@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MemorizationController;
+use App\Http\Controllers\QuranController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ShareController;
@@ -17,11 +18,14 @@ use Illuminate\Support\Facades\Route;
 
 // Authentication Routes
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Public Share Routes (Mode Read-Only untuk Orang Tua / Wali)
 Route::get('/share/m/{share_token}', [ShareController::class, 'view'])->name('share.view');
+Route::post('/share/m/{share_token}/verify-pin', [ShareController::class, 'verifyPin'])->name('share.verify-pin');
+Route::get('/share/m/{share_token}/quran', [ShareController::class, 'quranIndex'])->name('share.quran-index');
+Route::get('/share/m/{share_token}/quran/{number}', [ShareController::class, 'quranShow'])->name('share.quran-show');
 
 // Protected App Routes for Teachers / Admins
 Route::middleware('auth')->group(function () {
@@ -46,4 +50,8 @@ Route::middleware('auth')->group(function () {
     // Pengaturan Sekolah & Kop Laporan
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
+    // Baca Al-Qur'an & Progres Hafalan
+    Route::get('/quran', [QuranController::class, 'index'])->name('quran.index');
+    Route::get('/quran/{number}', [QuranController::class, 'show'])->name('quran.show');
 });

@@ -23,6 +23,8 @@ class Student extends Model
         'Tahfizh',
     ];
 
+    public const TOTAL_QURAN_VERSES = 6236;
+
     protected $fillable = [
         'nis',
         'name',
@@ -71,8 +73,7 @@ class Student extends Model
             ->pluck('count', 'grade')
             ->toArray();
 
-        // Total Al-Quran verses is 6236
-        $percentageTotal = round(($totalVersesMemorized / 6236) * 100, 2);
+        $percentageTotal = round(($totalVersesMemorized / self::TOTAL_QURAN_VERSES) * 100, 2);
 
         // Average grade calculation
         $dominantGrade = 'A';

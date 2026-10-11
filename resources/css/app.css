@@ -22,6 +22,10 @@
     font-family: 'Amiri', 'Scheherazade New', serif;
 }
 
+[x-cloak] {
+    display: none !important;
+}
+
 /* Islamic Geometric Background subtle pattern */
 .bg-islamic-pattern {
     background-color: #044e3b;

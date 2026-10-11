@@ -44,13 +44,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                             </svg>
                         </div>
-                        <div>
-                            <div class="flex items-center gap-1.5">
-                                <span class="text-xl font-extrabold tracking-tight text-white">3T <span class="text-amber-400">App</span></span>
-                                <span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-800 text-amber-300 font-bold border border-amber-400/30">v1.0</span>
-                            </div>
-                            <p class="text-[11px] text-emerald-300/80 font-medium">Takhassus • Tahsin • Tahfizh</p>
-                        </div>
+                        <span class="text-xl font-extrabold tracking-tight text-white">3T <span class="text-amber-400">App</span></span>
                     </a>
 
                     <!-- Close Button (Mobile only) -->
@@ -120,12 +114,21 @@
                     </div>
 
                     <!-- Laporan Rekap 3T -->
-                    <a href="{{ route('reports.index') }}" 
+                    <a href="{{ route('reports.index') }}"
                        class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {{ request()->routeIs('reports.*') ? 'bg-emerald-850 text-amber-300 font-bold shadow-inner border-l-4 border-amber-400' : 'text-emerald-100/90 hover:bg-emerald-900 hover:text-white' }}">
                         <svg class="w-5 h-5 {{ request()->routeIs('reports.*') ? 'text-amber-400' : 'text-emerald-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
                         <span>Laporan 3T (A4)</span>
+                    </a>
+
+                    <!-- Baca Al-Qur'an -->
+                    <a href="{{ route('quran.index') }}"
+                       class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all {{ request()->routeIs('quran.*') ? 'bg-emerald-850 text-amber-300 font-bold shadow-inner border-l-4 border-amber-400' : 'text-emerald-100/90 hover:bg-emerald-900 hover:text-white' }}">
+                        <svg class="w-5 h-5 {{ request()->routeIs('quran.*') ? 'text-amber-400' : 'text-emerald-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"></path>
+                        </svg>
+                        <span>Al-Qur'an</span>
                     </a>
 
                     <div class="px-3 pt-4 pb-1.5 text-[10px] font-bold text-emerald-400/60 uppercase tracking-widest">
@@ -153,7 +156,7 @@
                         </div>
                         <div class="truncate">
                             <p class="text-xs font-bold text-white truncate">{{ auth()->user()->name ?? 'Ust. Ichsan' }}</p>
-                            <p class="text-[10px] text-emerald-300/80 truncate">Guru 3T Al-Qur'an</p>
+                            <p class="text-[10px] text-emerald-300/80 truncate">{{ auth()->user()->email }}</p>
                         </div>
                     </div>
 
@@ -188,7 +191,7 @@
 
                     <!-- Right Info Header: School Name Only -->
                     <div class="flex items-center gap-3">
-                        <span class="hidden sm:inline-flex px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-900 text-xs font-extrabold border border-emerald-200/80 shadow-2xs">
+                        <span class="hidden sm:inline-flex max-w-xs truncate px-3 py-1 rounded-full bg-emerald-50 text-emerald-900 text-[11px] font-bold border border-emerald-200/80">
                             {{ $globalSchoolSetting->school_name ?? 'SMP ISLAM AL AZHAR 22 SENTRA PRIMER' }}
                         </span>
                     </div>
@@ -197,58 +200,10 @@
 
             <!-- Main Content Area -->
             <main class="flex-1 overflow-y-auto pb-16">
-                @if (session('success'))
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 no-print">
-                        <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between shadow-xs">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                </div>
-                                <p class="font-medium text-xs sm:text-sm">{{ session('success') }}</p>
-                            </div>
-                            <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700">✕</button>
-                        </div>
-                    </div>
-                @endif
-
-                @if (session('warning'))
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 no-print">
-                        <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 flex items-center justify-between shadow-xs">
-                            <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center flex-shrink-0">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                                    </svg>
-                                </div>
-                                <p class="font-medium text-xs sm:text-sm">{{ session('warning') }}</p>
-                            </div>
-                            <button type="button" onclick="this.parentElement.remove()" class="text-amber-500 hover:text-amber-700">✕</button>
-                        </div>
-                    </div>
-                @endif
-
+                <x-flash-message type="success" :message="session('success')" />
+                <x-flash-message type="warning" :message="session('warning')" />
                 @if ($errors->any())
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 no-print">
-                        <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 shadow-xs">
-                            <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 rounded-xl bg-rose-600 text-white flex items-center justify-center flex-shrink-0 mt-0.5">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </div>
-                                <div class="text-xs">
-                                    <p class="font-semibold">Terjadi kesalahan:</p>
-                                    <ul class="list-disc list-inside mt-1 space-y-0.5 text-rose-700">
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <x-flash-message type="error" :message="$errors->all()" />
                 @endif
 
                 @yield('content')
@@ -286,7 +241,8 @@
              x-transition:leave-start="opacity-100 scale-100"
              x-transition:leave-end="opacity-0 scale-95"
              class="relative mx-auto max-w-3xl transform overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-black/5 transition-all"
-             x-data="bigSearchEngine()">
+             x-data="studentSearch({ autoSearchOnInit: false })"
+             x-init="$watch('bigSearchOpen', (open) => { if (open) performSearch(); })">
 
             <!-- Input Bar -->
             <div class="relative flex items-center px-4 py-3.5 border-b border-slate-100 bg-gradient-to-r from-emerald-50/50 via-white to-amber-50/30">
@@ -370,50 +326,6 @@
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
 
     <script>
-        function bigSearchEngine() {
-            return {
-                searchQuery: '',
-                activeClass: 'all',
-                activeCategory: 'all',
-                loading: false,
-                results: [],
-                init() {
-                    this.performSearch();
-                },
-                setClassFilter(cls) {
-                    this.activeClass = this.activeClass === cls ? 'all' : cls;
-                    this.performSearch();
-                },
-                setCategoryFilter(cat) {
-                    this.activeCategory = this.activeCategory === cat ? 'all' : cat;
-                    this.performSearch();
-                },
-                performSearch() {
-                    this.loading = true;
-                    const params = new URLSearchParams();
-                    if (this.searchQuery) params.append('q', this.searchQuery);
-                    if (this.activeClass !== 'all') params.append('class', this.activeClass);
-                    if (this.activeCategory !== 'all') params.append('category', this.activeCategory);
-
-                    fetch(`/api/search?${params.toString()}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            this.results = data.data || [];
-                            this.loading = false;
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            this.loading = false;
-                        });
-                },
-                copyToClipboard(text, msg) {
-                    navigator.clipboard.writeText(text).then(() => {
-                        showToast(msg || 'Tautan berhasil disalin ke clipboard!');
-                    });
-                }
-            }
-        }
-
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');

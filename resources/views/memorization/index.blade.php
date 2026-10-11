@@ -5,126 +5,78 @@
 @section('content')
 <div class="max-w-[100vw] px-4 sm:px-6 lg:px-8 pt-4 pb-16 space-y-4" x-data="matrixMemorizationEngine()">
 
-    <!-- 1. Top Level Selector: Tingkat & Semester -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
-        
-        <!-- Tingkat: Kelas 7, Kelas 8, Kelas 9 -->
-        <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-xs font-extrabold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mr-1">
-                <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                </svg>
-                TINGKAT:
-            </span>
-            @foreach (['7' => 'Kelas 7', '8' => 'Kelas 8', '9' => 'Kelas 9'] as $lvl => $label)
-                <a href="{{ route('memorization.index', ['level' => $lvl, 'semester' => $selectedSemester, 'surah_id' => $selectedSurah->id, 'category' => $selectedCategory]) }}" 
-                   class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all {{ $gradeLevel == $lvl ? 'bg-slate-800 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-600' }}">
+    <!-- 1. Tingkat, Semester, Rombel & Guru Pembimbing (satu baris) -->
+    <div class="flex flex-wrap items-center gap-3 bg-white p-3.5 sm:p-4 rounded-2xl border border-slate-200/80 shadow-2xs">
+        <!-- Tingkat -->
+        <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[11px] font-bold text-slate-400 uppercase mr-0.5">Tingkat:</span>
+            @foreach (['7' => '7', '8' => '8', '9' => '9'] as $lvl => $label)
+                <a href="{{ route('memorization.index', ['level' => $lvl, 'semester' => $selectedSemester, 'surah_id' => $selectedSurah->id, 'category' => $selectedCategory]) }}"
+                   class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all {{ $gradeLevel == $lvl ? 'bg-slate-800 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-600' }}">
                     {{ $label }}
                 </a>
             @endforeach
         </div>
 
-        <!-- Semester: Semester 1, Semester 2 -->
-        <div class="flex items-center gap-2 flex-wrap self-start sm:self-center">
-            <span class="text-xs font-extrabold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mr-1">
-                <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
-                SEMESTER:
-            </span>
-            @foreach (['1' => 'Semester 1', '2' => 'Semester 2'] as $sem => $label)
-                <a href="{{ route('memorization.index', ['level' => $gradeLevel, 'class_name' => $selectedClass, 'semester' => $sem, 'surah_id' => $selectedSurah->id, 'category' => $selectedCategory]) }}" 
-                   class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all {{ $selectedSemester == $sem ? 'bg-emerald-700 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-600' }}">
+        <span class="text-slate-200">|</span>
+
+        <!-- Semester -->
+        <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[11px] font-bold text-slate-400 uppercase mr-0.5">Semester:</span>
+            @foreach (['1' => '1', '2' => '2'] as $sem => $label)
+                <a href="{{ route('memorization.index', ['level' => $gradeLevel, 'class_name' => $selectedClass, 'semester' => $sem, 'surah_id' => $selectedSurah->id, 'category' => $selectedCategory]) }}"
+                   class="px-2.5 py-1 rounded-lg text-xs font-bold transition-all {{ $selectedSemester == $sem ? 'bg-emerald-700 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-600' }}">
                     {{ $label }}
                 </a>
             @endforeach
         </div>
-    </div>
 
-    <!-- 2. Rombel Bar & Teacher Info Card -->
-    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <!-- Rombel Selection Pills -->
-        <div class="space-y-1.5">
-            <label class="block text-[11px] font-bold text-slate-500">Pilih Rombongan Belajar (Rombel):</label>
-            <div class="flex items-center gap-2 flex-wrap">
-                @foreach ($classesInLevel as $cls)
-                    @php $cnt = $classCounts[$cls] ?? 0; @endphp
-                    <a href="{{ route('memorization.index', ['level' => $gradeLevel, 'class_name' => $cls, 'semester' => $selectedSemester, 'surah_id' => $selectedSurah->id, 'category' => $selectedCategory]) }}" 
-                       class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-extrabold transition-all border {{ $selectedClass === $cls ? 'bg-emerald-700 border-emerald-800 text-white shadow-sm ring-2 ring-emerald-500/30' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50' }}">
-                        <span>Kelas {{ $cls }}</span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $selectedClass === $cls ? 'bg-emerald-850 text-amber-300' : 'bg-slate-100 text-slate-600' }}">
-                            {{ $cnt }} Murid
-                        </span>
-                    </a>
-                @endforeach
-            </div>
+        <span class="text-slate-200">|</span>
+
+        <!-- Rombel -->
+        <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[11px] font-bold text-slate-400 uppercase mr-0.5">Rombel:</span>
+            @foreach ($classesInLevel as $cls)
+                @php $cnt = $classCounts[$cls] ?? 0; @endphp
+                <a href="{{ route('memorization.index', ['level' => $gradeLevel, 'class_name' => $cls, 'semester' => $selectedSemester, 'surah_id' => $selectedSurah->id, 'category' => $selectedCategory]) }}"
+                   class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all {{ $selectedClass === $cls ? 'bg-emerald-700 text-white shadow-xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-600' }}">
+                    <span>{{ $cls }}</span>
+                    <span class="px-1.5 py-0.5 rounded text-[10px] {{ $selectedClass === $cls ? 'bg-emerald-850 text-amber-300' : 'bg-white text-slate-500' }}">{{ $cnt }}</span>
+                </a>
+            @endforeach
         </div>
 
-        <!-- Teacher / Guru Pembimbing 3T Badge -->
-        <div class="bg-emerald-50/80 border border-emerald-200/80 rounded-2xl p-2.5 px-4 flex items-center justify-between gap-4 self-start lg:self-center">
-            <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-bold text-xs shadow-2xs flex-shrink-0">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
-                </div>
-                <div>
-                    <span class="block text-[10px] font-extrabold text-emerald-800 uppercase tracking-wider">GURU PEMBIMBING {{ strtoupper($selectedCategory) }}</span>
-                    <span class="text-xs font-bold text-slate-800">
-                        @if ($selectedCategory === 'Tahsin')
-                            {{ $setting->teacher_tahsin ?? 'Ust. Ahmad Fauzi, S.Pd.I' }}
-                        @elseif ($selectedCategory === 'Takhassus')
-                            {{ $setting->teacher_takhassus ?? 'Ust. Ichsan' }}
-                        @else
-                            {{ $setting->teacher_tahfizh ?? 'Ust. Ichsan' }}
-                        @endif
-                    </span>
-                </div>
-            </div>
-            <a href="{{ route('settings.index') }}" class="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 bg-white px-2 py-1 rounded-lg border border-emerald-200 shadow-2xs">
-                Ubah
-            </a>
+        <!-- Guru Pembimbing (chip ringkas) -->
+        <div class="ml-auto flex items-center gap-1.5 text-xs">
+            <span class="text-slate-400">Guru {{ $selectedCategory }}:</span>
+            <span class="font-bold text-slate-800">
+                @if ($selectedCategory === 'Tahsin')
+                    {{ $setting->teacher_tahsin ?? 'Ust. Ahmad Fauzi, S.Pd.I' }}
+                @elseif ($selectedCategory === 'Takhassus')
+                    {{ $setting->teacher_takhassus ?? 'Ust. Ichsan' }}
+                @else
+                    {{ $setting->teacher_tahfizh ?? 'Ust. Ichsan' }}
+                @endif
+            </span>
+            <a href="{{ route('settings.index') }}" class="text-emerald-700 hover:text-emerald-900 font-bold">Ubah</a>
         </div>
     </div>
 
-    <!-- 3. Target Hafalan Surat & Searchable Dropdown Bar -->
-    <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
-        
-        <!-- Left: Current Surah Target Info -->
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center flex-shrink-0 shadow-2xs">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                </svg>
-            </div>
-            <div>
-                <div class="flex items-center gap-2">
-                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">TARGET HAFALAN SURAT:</span>
-                    <span class="px-2 py-0.2 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">Sem {{ $selectedSemester }}</span>
-                </div>
-                <div class="flex items-baseline gap-2 mt-0.5">
-                    <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">
-                        {{ $selectedSurah->name_latin }} 
-                        <span class="font-arabic text-amber-600 text-lg font-bold">({{ $selectedSurah->name_arabic }})</span>
-                    </h2>
-                    <span class="text-xs text-slate-500 font-medium">
-                        • Surat ke-{{ $selectedSurah->number }} ({{ $selectedSurah->total_verses }} Ayat) • Juz {{ $selectedSurah->juz_start }}
-                    </span>
-                </div>
-            </div>
-        </div>
+    <!-- 2. Target Hafalan Surat (Searchable Dropdown) -->
+    <div class="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-xs flex items-center gap-3" x-data="{ surahSearchOpen: false, surahFilter: '' }">
+        <span class="text-xs font-bold text-slate-500 whitespace-nowrap">Surat:</span>
 
-        <!-- Right: Searchable Surah Dropdown Selector -->
-        <div class="flex items-center gap-2.5 self-start md:self-center w-full md:w-auto" x-data="{ surahSearchOpen: false, surahFilter: '' }">
-            <span class="text-xs font-bold text-slate-500 whitespace-nowrap">Pilih Surat:</span>
-            
-            <div class="relative w-full md:w-80">
-                <button type="button" 
-                        @click="surahSearchOpen = !surahSearchOpen" 
-                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 shadow-2xs cursor-pointer">
-                    <span class="truncate">{{ $selectedSurah->number }}. {{ $selectedSurah->name_latin }} ({{ $selectedSurah->total_verses }} Ayat)</span>
-                    <svg class="w-4 h-4 text-slate-400 ml-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </button>
+        <div class="relative w-full md:w-96">
+            <button type="button"
+                    @click="surahSearchOpen = !surahSearchOpen"
+                    class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-xs font-bold text-slate-800 shadow-2xs cursor-pointer">
+                <span class="truncate">
+                    {{ $selectedSurah->number }}. {{ $selectedSurah->name_latin }}
+                    <span class="font-arabic font-normal text-amber-700">({{ $selectedSurah->name_arabic }})</span>
+                    &middot; Juz {{ $selectedSurah->juz_start }} &middot; {{ $selectedSurah->total_verses }} Ayat
+                </span>
+                <svg class="w-4 h-4 text-slate-400 ml-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
 
                 <!-- Searchable Dropdown Popup -->
                 <div x-show="surahSearchOpen" 
@@ -151,10 +103,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+        <span class="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold flex-shrink-0">Sem {{ $selectedSemester }}</span>
     </div>
 
-    <!-- 4. Program 3T, Grade Nilai, & Mode Edit/View Only Bar -->
+
+    <!-- 3. Program 3T, Grade Nilai, & Mode Edit/View Only Bar -->
     <div class="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-3">
         
         <!-- Left: Program 3T & Grade Nilai Tabs -->
@@ -172,43 +125,30 @@
 
             <!-- Grade Nilai Selector -->
             <div class="flex items-center gap-1 pl-2 border-l border-slate-200">
-                <span class="text-xs font-bold text-slate-500 mr-1">Grade Nilai:</span>
-                <button type="button" @click="activeGrade = 'A'" :class="activeGrade === 'A' ? 'bg-emerald-600 text-white font-extrabold ring-2 ring-emerald-400 shadow-2xs' : 'bg-slate-100 text-slate-700'" class="px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer" title="Grade A (Mutqin)">A</button>
-                <button type="button" @click="activeGrade = 'B'" :class="activeGrade === 'B' ? 'bg-blue-600 text-white font-extrabold ring-2 ring-blue-400 shadow-2xs' : 'bg-slate-100 text-slate-700'" class="px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer" title="Grade B (Lancar)">B</button>
-                <button type="button" @click="activeGrade = 'C'" :class="activeGrade === 'C' ? 'bg-amber-500 text-white font-extrabold ring-2 ring-amber-400 shadow-2xs' : 'bg-slate-100 text-slate-700'" class="px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer" title="Grade C (Cukup)">C</button>
-                <button type="button" @click="activeGrade = 'D'" :class="activeGrade === 'D' ? 'bg-rose-500 text-white font-extrabold ring-2 ring-rose-400 shadow-2xs' : 'bg-slate-100 text-slate-700'" class="px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer" title="Grade D (Kurang)">D</button>
+                <span class="text-xs font-bold text-slate-500 mr-1">Grade:</span>
+                <button type="button" @click="activeGrade = 'A'" :class="activeGrade === 'A' ? 'bg-emerald-600 text-white font-extrabold ring-2 ring-emerald-400 shadow-2xs' : 'bg-slate-100 text-slate-700'" class="px-2 py-1 rounded-lg text-xs font-bold cursor-pointer flex items-center gap-1" title="Grade A (Mutqin)"><span>A</span><span class="text-[10px] font-normal opacity-80 hidden sm:inline">Mutqin</span></button>
+                <button type="button" @click="activeGrade = 'B'" :class="activeGrade === 'B' ? 'bg-blue-600 text-white font-extrabold ring-2 ring-blue-400 shadow-2xs' : 'bg-slate-100 text-slate-700'" class="px-2 py-1 rounded-lg text-xs font-bold cursor-pointer flex items-center gap-1" title="Grade B (Lancar)"><span>B</span><span class="text-[10px] font-normal opacity-80 hidden sm:inline">Lancar</span></button>
+                <button type="button" @click="activeGrade = 'C'" :class="activeGrade === 'C' ? 'bg-amber-500 text-white font-extrabold ring-2 ring-amber-400 shadow-2xs' : 'bg-slate-100 text-slate-700'" class="px-2 py-1 rounded-lg text-xs font-bold cursor-pointer flex items-center gap-1" title="Grade C (Cukup)"><span>C</span><span class="text-[10px] font-normal opacity-80 hidden sm:inline">Cukup</span></button>
+                <button type="button" @click="activeGrade = 'D'" :class="activeGrade === 'D' ? 'bg-rose-500 text-white font-extrabold ring-2 ring-rose-400 shadow-2xs' : 'bg-slate-100 text-slate-700'" class="px-2 py-1 rounded-lg text-xs font-bold cursor-pointer flex items-center gap-1" title="Grade D (Kurang)"><span>D</span><span class="text-[10px] font-normal opacity-80 hidden sm:inline">Kurang</span></button>
             </div>
         </div>
 
-        <!-- Right: Mode Edit / View Only Button & Autosave Status -->
-        <div class="flex items-center gap-2.5 self-start lg:self-center flex-wrap">
-            
-            <!-- Mode Switch Button -->
-            <button type="button" 
-                    @click="toggleEditMode()" 
-                    :class="isEditMode ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 text-slate-950 ring-4 ring-amber-300/80 shadow-md font-extrabold' : 'bg-emerald-800 hover:bg-emerald-900 text-white font-bold shadow-2xs'"
-                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs transition-all duration-200 cursor-pointer">
-                <template x-if="isEditMode">
-                    <span class="flex items-center gap-1.5">
-                        <span class="relative flex h-2.5 w-2.5">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-950 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-950"></span>
-                        </span>
-                        <span>✏️ Mode Edit (Aktif) — Klik Selesai ✓</span>
-                    </span>
-                </template>
-                <template x-if="!isEditMode">
-                    <span class="flex items-center gap-1.5">
-                        <span>🔒 Mode View Only (Klik untuk Edit)</span>
-                    </span>
-                </template>
+        <!-- Right: Mode Edit / View Only Button & Autosave Status (satu pill) -->
+        <div class="inline-flex items-center rounded-xl border border-slate-200 shadow-2xs overflow-hidden text-xs self-start lg:self-center flex-shrink-0">
+            <button type="button"
+                    @click="toggleEditMode()"
+                    :class="isEditMode ? 'bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold' : 'bg-emerald-800 hover:bg-emerald-900 text-white font-bold'"
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2 transition-all duration-200 cursor-pointer">
+                <span class="relative flex h-2 w-2" x-show="isEditMode">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-950 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-950"></span>
+                </span>
+                <span x-text="isEditMode ? 'Mode: Edit' : 'Mode: Lihat'"></span>
             </button>
 
-            <!-- Autosave Status Badge -->
-            <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border"
-                 :class="syncStatus.class">
-                <span class="w-2 h-2 rounded-full" :class="syncStatus.dotClass"></span>
-                <span x-text="syncStatus.text">✓ Siap mencatat</span>
+            <div class="inline-flex items-center gap-1.5 px-3 py-2 border-l border-slate-200" :class="syncStatus.class">
+                <span class="w-1.5 h-1.5 rounded-full" :class="syncStatus.dotClass"></span>
+                <span x-text="syncStatus.text">Siap mencatat</span>
             </div>
         </div>
     </div>

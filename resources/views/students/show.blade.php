@@ -47,19 +47,28 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex flex-wrap sm:flex-col gap-2 flex-shrink-0">
-                <a href="{{ route('memorization.index', ['student_id' => $student->id]) }}" 
+            <div class="flex flex-wrap sm:flex-col gap-2 flex-shrink-0" x-data="{ shareOpen: false }">
+                <a href="{{ route('memorization.index', ['student_id' => $student->id]) }}"
                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-500 text-emerald-950 font-bold text-xs shadow-md transition-all">
-                    <span>🟢 Catat Hafalan Sekarang</span>
+                    <span>Catat Hafalan Sekarang</span>
                 </a>
-                <button onclick="navigator.clipboard.writeText('{{ route('share.view', $student->share_token) }}'); showToast('Link Web Read-Only berhasil disalin!')" 
-                        class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-800/80 hover:bg-emerald-700 text-white font-medium text-xs border border-emerald-600/50 shadow transition-all">
-                    <span>🔗 Salin Web Link Orang Tua</span>
-                </button>
-                <button onclick="navigator.clipboard.writeText('{{ route('share.api', $student->share_token) }}'); showToast('Link Share API JSON berhasil disalin!')" 
-                        class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-teal-800/80 hover:bg-teal-700 text-white font-mono font-medium text-xs border border-teal-600/50 shadow transition-all">
-                    <span>⚡ Salin URL Share API (JSON)</span>
-                </button>
+                <div class="relative">
+                    <button type="button" @click="shareOpen = !shareOpen" @click.outside="shareOpen = false"
+                            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-emerald-800/80 hover:bg-emerald-700 text-white font-medium text-xs border border-emerald-600/50 shadow transition-all">
+                        <span>Bagikan ke Orang Tua</span>
+                    </button>
+                    <div x-show="shareOpen" x-cloak x-transition
+                         class="absolute right-0 sm:left-0 top-full mt-2 w-56 rounded-xl bg-white shadow-xl border border-slate-200 overflow-hidden z-20 text-slate-700">
+                        <button type="button" @click="navigator.clipboard.writeText('{{ route('share.view', $student->share_token) }}'); showToast('Link Web Read-Only berhasil disalin!'); shareOpen = false"
+                                class="w-full text-left px-3.5 py-2.5 text-xs font-semibold hover:bg-emerald-50">
+                            Salin Web Link Orang Tua
+                        </button>
+                        <button type="button" @click="navigator.clipboard.writeText('{{ route('share.api', $student->share_token) }}'); showToast('Link Share API JSON berhasil disalin!'); shareOpen = false"
+                                class="w-full text-left px-3.5 py-2.5 text-xs font-mono font-semibold hover:bg-emerald-50 border-t border-slate-100">
+                            Salin URL Share API (JSON)
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -72,7 +81,7 @@
         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm text-center">
             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Ayat Dihafal</span>
             <div class="text-2xl font-extrabold text-emerald-700 mt-1">{{ $stats['total_verses'] }}</div>
-            <span class="text-[11px] text-slate-400">dari 6.236 ayat Al-Qur'an</span>
+            <span class="text-[11px] text-slate-400">dari {{ number_format(\App\Models\Student::TOTAL_QURAN_VERSES) }} ayat Al-Qur'an</span>
         </div>
         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm text-center">
             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Surah Disetor</span>
@@ -133,7 +142,7 @@
                                         <span class="font-arabic text-emerald-800 text-base">({{ $surah->name_arabic }})</span>
                                         <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-700 font-bold">Juz {{ $surah->juz_start }}</span>
                                     </div>
-                                    <p class="text-[11px] text-slate-400">{{ $surah->translation_id }} • {{ $surah->total_verses }} Ayat • {{ $surah->revelation_type }}</p>
+                                    <p class="text-[11px] text-slate-400" title="{{ $surah->translation_id }} • {{ $surah->revelation_type }}">{{ $surah->total_verses }} Ayat</p>
                                 </div>
                             </div>
                             <div class="flex items-center gap-3 self-end sm:self-center">
@@ -141,7 +150,11 @@
                                     <span class="text-xs font-bold text-slate-800">{{ $memorizedVersesCount }}/{{ $totalVersesInSurah }} Ayat</span>
                                     <span class="text-[10px] text-emerald-700 font-bold block">({{ $pctSurah }}%)</span>
                                 </div>
-                                <a href="{{ route('memorization.index', ['student_id' => $student->id, 'surah_id' => $surah->id]) }}" 
+                                <a href="{{ route('quran.show', ['number' => $surah->number, 'student_id' => $student->id]) }}"
+                                   class="px-2.5 py-1.5 rounded-lg bg-white border border-emerald-300 hover:bg-emerald-50 text-emerald-800 font-bold text-xs shadow-sm transition-all">
+                                    Baca &amp; Highlight
+                                </a>
+                                <a href="{{ route('memorization.index', ['student_id' => $student->id, 'surah_id' => $surah->id]) }}"
                                    class="px-2.5 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-sm transition-all">
                                     Edit Hafalan ➔
                                 </a>
