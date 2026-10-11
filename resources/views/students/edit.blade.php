@@ -99,8 +99,19 @@
                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                     Catatan Guru / Pembimbing (Opsional)
                 </label>
-                <input type="text" name="notes" value="{{ old('notes', $student->notes) }}" 
+                <input type="text" name="notes" value="{{ old('notes', $student->notes) }}"
                        class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500">
+            </div>
+
+            <!-- PIN Akses Share -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                    PIN Akses Share (Opsional)
+                </label>
+                <input type="text" name="access_pin" value="{{ old('access_pin', $student->access_pin) }}" maxlength="20"
+                       placeholder="Kosongkan untuk digenerate otomatis"
+                       class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 font-mono">
+                <p class="text-[11px] text-slate-400 mt-1">PIN ini diminta saat orang tua membuka link share progres murid.</p>
             </div>
 
             <!-- Submit -->

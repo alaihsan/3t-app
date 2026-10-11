@@ -21,6 +21,10 @@ class ShareController extends Controller
         $student = Student::where('share_token', $share_token)->firstOrFail();
         $setting = SchoolSetting::getSettings();
 
+        if ($this->pinRequired($student) && !$this->isUnlocked($request, $student)) {
+            return view('share.pin-gate', compact('student', 'setting'));
+        }
+
         $records = MemorizationRecord::where('student_id', $student->id)
             ->with('surah')
             ->orderBy('recorded_at', 'desc')
@@ -69,6 +73,26 @@ class ShareController extends Controller
     }
 
     /**
+     * Verify PIN submitted from the pin-gate form and unlock the share view for this session.
+     */
+    public function verifyPin(string $share_token, Request $request): RedirectResponse
+    {
+        $student = Student::where('share_token', $share_token)->firstOrFail();
+
+        $request->validate([
+            'pin' => ['required', 'string'],
+        ]);
+
+        if (!$this->pinRequired($student) || $request->input('pin') !== $student->access_pin) {
+            return back()->withErrors(['pin' => 'PIN yang Anda masukkan salah.']);
+        }
+
+        $request->session()->put("share_unlocked_{$student->id}", true);
+
+        return redirect()->route('share.view', $student->share_token);
+    }
+
+    /**
      * Share API URL Endpoint (JSON Response)
      */
     public function apiProgress(string $share_token, Request $request): JsonResponse
@@ -80,6 +104,13 @@ class ShareController extends Controller
                 'status' => 'error',
                 'message' => 'Murid tidak ditemukan atau token tidak valid.',
             ], 404);
+        }
+
+        if ($this->pinRequired($student) && $request->query('pin') !== $student->access_pin) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'PIN akses diperlukan atau tidak valid.',
+            ], 401);
         }
 
         $setting = SchoolSetting::getSettings();
@@ -138,5 +169,15 @@ class ShareController extends Controller
             'detail_hafalan_per_surah' => $groupedBySurah,
             'generated_at' => now()->toIso8601String(),
         ]);
+    }
+
+    private function pinRequired(Student $student): bool
+    {
+        return filled($student->access_pin);
+    }
+
+    private function isUnlocked(Request $request, Student $student): bool
+    {
+        return $request->session()->get("share_unlocked_{$student->id}") === true;
     }
 }

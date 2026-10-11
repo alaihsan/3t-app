@@ -75,11 +75,11 @@ class StudentController extends Controller
             'class_name' => $validated['class_name'],
             'categories' => $validated['categories'],
             'share_token' => Str::random(32),
-            'access_pin' => $validated['access_pin'] ?? '123456',
+            'access_pin' => ($validated['access_pin'] ?? null) ?: str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT),
             'notes' => $validated['notes'] ?? null,
         ]);
 
-        return redirect()->route('students.index')->with('success', "Murid {$student->name} berhasil ditambahkan!");
+        return redirect()->route('students.index')->with('success', "Murid {$student->name} berhasil ditambahkan! PIN akses share: {$student->access_pin}");
     }
 
     public function show(Student $student): View

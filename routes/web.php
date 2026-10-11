@@ -22,6 +22,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Public Share Routes (Mode Read-Only untuk Orang Tua / Wali)
 Route::get('/share/m/{share_token}', [ShareController::class, 'view'])->name('share.view');
+Route::post('/share/m/{share_token}/verify-pin', [ShareController::class, 'verifyPin'])->name('share.verify-pin');
 
 // Protected App Routes for Teachers / Admins
 Route::middleware('auth')->group(function () {

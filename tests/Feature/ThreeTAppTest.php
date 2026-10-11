@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\Surah;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class ThreeTAppTest extends TestCase
@@ -16,18 +17,21 @@ class ThreeTAppTest extends TestCase
 
     protected User $user;
 
+    protected const TEST_USER_PASSWORD = 'TestPassword123!';
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->seed();
         $this->user = User::where('email', 'ichsan@smpi-alazhar22.sch.id')->first() ?? User::factory()->create();
+        $this->user->forceFill(['password' => Hash::make(self::TEST_USER_PASSWORD)])->save();
     }
 
     public function test_user_can_login_with_valid_credentials(): void
     {
         $response = $this->post(route('login.post'), [
             'email' => 'ichsan@smpi-alazhar22.sch.id',
-            'password' => 'B1smillah',
+            'password' => self::TEST_USER_PASSWORD,
         ]);
 
         $response->assertRedirect(route('dashboard'));
@@ -183,5 +187,70 @@ class ThreeTAppTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('LAPORAN MONITORING HAFALAN', false);
         $response->assertSee('Guru Tahfizh', false);
+    }
+
+    public function test_share_web_view_requires_pin_when_access_pin_set(): void
+    {
+        $student = Student::first();
+        $student->update(['access_pin' => '482913']);
+
+        $response = $this->get(route('share.view', $student->share_token));
+        $response->assertStatus(200);
+        $response->assertSee('Masukkan PIN Akses');
+        $response->assertDontSee('Peta Capaian Juz');
+    }
+
+    public function test_share_web_view_wrong_pin_is_rejected(): void
+    {
+        $student = Student::first();
+        $student->update(['access_pin' => '482913']);
+
+        $response = $this->post(route('share.verify-pin', $student->share_token), [
+            'pin' => '000000',
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHasErrors('pin');
+
+        $followUp = $this->get(route('share.view', $student->share_token));
+        $followUp->assertSee('Masukkan PIN Akses');
+    }
+
+    public function test_share_web_view_correct_pin_unlocks_session(): void
+    {
+        $student = Student::first();
+        $student->update(['access_pin' => '482913']);
+
+        $verify = $this->post(route('share.verify-pin', $student->share_token), [
+            'pin' => '482913',
+        ]);
+        $verify->assertRedirect(route('share.view', $student->share_token));
+
+        $response = $this->get(route('share.view', $student->share_token));
+        $response->assertStatus(200);
+        $response->assertSee($student->name);
+        $response->assertSee('Peta Capaian Juz');
+    }
+
+    public function test_share_api_rejects_missing_or_wrong_pin_when_set(): void
+    {
+        $student = Student::first();
+        $student->update(['access_pin' => '482913']);
+
+        $noPin = $this->getJson(route('share.api', ['share_token' => $student->share_token]));
+        $noPin->assertStatus(401);
+
+        $wrongPin = $this->getJson(route('share.api', [
+            'share_token' => $student->share_token,
+            'pin' => '000000',
+        ]));
+        $wrongPin->assertStatus(401);
+
+        $correctPin = $this->getJson(route('share.api', [
+            'share_token' => $student->share_token,
+            'pin' => '482913',
+        ]));
+        $correctPin->assertStatus(200);
+        $correctPin->assertJsonPath('status', 'success');
     }
 }
