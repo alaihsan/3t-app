@@ -3,7 +3,7 @@
 @section('title', 'Dashboard - 3T App')
 
 @section('content')
-<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 space-y-6" x-data="dashboardSearchEngine()">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12 space-y-6" x-data="studentSearch({ autoSearchOnInit: true })">
 
     <!-- Single Google-Style Big Search Center Section -->
     <div class="text-center py-6 sm:py-8 space-y-4">
@@ -219,51 +219,4 @@
 
 </div>
 
-@push('scripts')
-<script>
-function dashboardSearchEngine() {
-    return {
-        searchQuery: '',
-        activeClass: 'all',
-        activeCategory: 'all',
-        showResults: false,
-        results: [],
-        init() {
-            this.performSearch();
-        },
-        setClassFilter(cls) {
-            this.activeClass = this.activeClass === cls ? 'all' : cls;
-            this.performSearch();
-        },
-        setCategoryFilter(cat) {
-            this.activeCategory = this.activeCategory === cat ? 'all' : cat;
-            this.performSearch();
-        },
-        performSearch() {
-            const params = new URLSearchParams();
-            if (this.searchQuery) params.append('q', this.searchQuery);
-            if (this.activeClass !== 'all') params.append('class', this.activeClass);
-            if (this.activeCategory !== 'all') params.append('category', this.activeCategory);
-
-            fetch(`/api/search?${params.toString()}`)
-                .then(res => res.json())
-                .then(data => {
-                    this.results = data.data || [];
-                    if (this.searchQuery || this.activeClass !== 'all' || this.activeCategory !== 'all') {
-                        this.showResults = true;
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                });
-        },
-        copyToClipboard(text, msg) {
-            navigator.clipboard.writeText(text).then(() => {
-                showToast(msg || 'Tautan berhasil disalin ke clipboard!');
-            });
-        }
-    }
-}
-</script>
-@endpush
 @endsection

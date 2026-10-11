@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'quran_foundation' => [
+        'client_id' => env('QURAN_FOUNDATION_CLIENT_ID'),
+        'client_secret' => env('QURAN_FOUNDATION_CLIENT_SECRET'),
+        'token_url' => env('QURAN_FOUNDATION_TOKEN_URL', 'https://oauth2.quran.foundation/oauth2/token'),
+        'api_base_url' => env('QURAN_FOUNDATION_API_BASE_URL', 'https://apis.quran.foundation/content/api/v4'),
+        // Leave null to auto-discover and cache the Indonesian translation resource id.
+        'translation_resource_id' => env('QURAN_FOUNDATION_TRANSLATION_ID'),
+    ],
+
 ];

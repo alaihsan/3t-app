@@ -163,6 +163,9 @@
                                 <div class="text-right">
                                     <span class="text-xs font-extrabold text-slate-800">{{ $memorizedCount }} / {{ $surah->total_verses }} Ayat</span>
                                     <span class="text-[10px] text-emerald-700 font-bold block">({{ $pct }}%)</span>
+                                    <a href="{{ route('share.quran-show', ['share_token' => $student->share_token, 'number' => $surah->number]) }}" class="text-[11px] text-emerald-700 hover:text-emerald-900 font-bold underline">
+                                        Baca Al-Qur'an →
+                                    </a>
                                 </div>
                             </div>
 

@@ -141,7 +141,11 @@
                                     <span class="text-xs font-bold text-slate-800">{{ $memorizedVersesCount }}/{{ $totalVersesInSurah }} Ayat</span>
                                     <span class="text-[10px] text-emerald-700 font-bold block">({{ $pctSurah }}%)</span>
                                 </div>
-                                <a href="{{ route('memorization.index', ['student_id' => $student->id, 'surah_id' => $surah->id]) }}" 
+                                <a href="{{ route('quran.show', ['number' => $surah->number, 'student_id' => $student->id]) }}"
+                                   class="px-2.5 py-1.5 rounded-lg bg-white border border-emerald-300 hover:bg-emerald-50 text-emerald-800 font-bold text-xs shadow-sm transition-all">
+                                    Baca &amp; Highlight
+                                </a>
+                                <a href="{{ route('memorization.index', ['student_id' => $student->id, 'surah_id' => $surah->id]) }}"
                                    class="px-2.5 py-1.5 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-sm transition-all">
                                     Edit Hafalan ➔
                                 </a>
