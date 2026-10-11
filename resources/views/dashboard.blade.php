@@ -8,14 +8,11 @@
     <!-- Single Google-Style Big Search Center Section -->
     <div class="text-center py-6 sm:py-8 space-y-4">
         <div>
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100/80 text-emerald-800 text-xs font-bold border border-emerald-300/60 mb-2">
-                🕌 Sistem 3T (Takhassus • Tahsin • Tahfizh)
-            </span>
             <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
                 Pencarian Murid <span class="text-emerald-700">3T App</span>
             </h1>
             <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mt-1">
-                Ketik nama murid, NIS, atau kelas untuk langsung mencatat hafalan atau melihat rapor
+                Takhassus • Tahsin • Tahfizh
             </p>
         </div>
 
@@ -41,11 +38,6 @@
                     ✕
                 </button>
 
-                <div class="flex items-center gap-1.5 flex-shrink-0">
-                    <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded bg-emerald-50 text-[10px] font-bold text-emerald-800">
-                        Live Search
-                    </span>
-                </div>
             </div>
 
             <!-- Quick Filter Tags Directly Under the Search Bar -->
@@ -66,9 +58,8 @@
                  @click.outside="showResults = false"
                  class="absolute left-0 right-0 top-full mt-3 bg-white rounded-3xl shadow-2xl border border-slate-200 text-left overflow-hidden z-40 max-h-[55vh] overflow-y-auto divide-y divide-slate-100">
                 
-                <div class="p-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                    <span>Hasil Pencarian: <strong class="text-slate-800" x-text="results.length"></strong> Murid Ditemukan</span>
-                    <span class="text-[10px] text-slate-400">Klik 'Catat' untuk langsung mencatat hafalan</span>
+                <div class="p-3 bg-slate-50 border-b border-slate-100 text-xs text-slate-500">
+                    <strong class="text-slate-800" x-text="results.length"></strong> murid ditemukan
                 </div>
 
                 <template x-for="student in results" :key="student.id">
@@ -129,8 +120,10 @@
                             {{ $cnt }}
                         </span>
                     </div>
-                    <div class="mt-2 text-[10px] text-slate-400 group-hover:text-emerald-700 font-semibold">
-                        Lihat Murid ➔
+                    <div class="mt-2 text-slate-300 group-hover:text-emerald-600">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                        </svg>
                     </div>
                 </a>
             @endforeach

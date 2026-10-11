@@ -41,7 +41,7 @@
 
     <!-- Filter Control Card -->
     <div class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-2xs space-y-5">
-        <form action="{{ route('reports.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
+        <form action="{{ route('reports.index') }}" method="GET" class="grid grid-cols-1 sm:grid-cols-10 gap-4 items-end">
             
             <!-- Pilih Kelas (7A - 9D) -->
             <div class="sm:col-span-3">
@@ -72,13 +72,6 @@
                     <option value="1" {{ $selectedSemester == '1' ? 'selected' : '' }}>Semester 1</option>
                     <option value="2" {{ $selectedSemester == '2' ? 'selected' : '' }}>Semester 2</option>
                 </select>
-            </div>
-
-            <!-- Action Button -->
-            <div class="sm:col-span-2">
-                <button type="submit" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold shadow transition-all cursor-pointer">
-                    Tampilkan
-                </button>
             </div>
         </form>
 
@@ -133,16 +126,18 @@
             </div>
 
             <!-- Detail Input Jabatan & Nama -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1">Jabatan Tanda Tangan</label>
-                    <input type="text" x-model="signTitle" @input="activePreset = 'custom'" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500">
+            <x-collapsible-panel trigger="Atau isi manual">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1">Jabatan Tanda Tangan</label>
+                        <input type="text" x-model="signTitle" @input="activePreset = 'custom'" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1">Nama Guru Yang Menandatangani</label>
+                        <input type="text" x-model="signName" @input="activePreset = 'custom'" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1">Nama Guru Yang Menandatangani</label>
-                    <input type="text" x-model="signName" @input="activePreset = 'custom'" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 bg-white font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500">
-                </div>
-            </div>
+            </x-collapsible-panel>
         </div>
     </div>
 

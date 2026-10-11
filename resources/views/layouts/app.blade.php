@@ -44,13 +44,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                             </svg>
                         </div>
-                        <div>
-                            <div class="flex items-center gap-1.5">
-                                <span class="text-xl font-extrabold tracking-tight text-white">3T <span class="text-amber-400">App</span></span>
-                                <span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-800 text-amber-300 font-bold border border-amber-400/30">v1.0</span>
-                            </div>
-                            <p class="text-[11px] text-emerald-300/80 font-medium">Takhassus • Tahsin • Tahfizh</p>
-                        </div>
+                        <span class="text-xl font-extrabold tracking-tight text-white">3T <span class="text-amber-400">App</span></span>
                     </a>
 
                     <!-- Close Button (Mobile only) -->
@@ -162,7 +156,7 @@
                         </div>
                         <div class="truncate">
                             <p class="text-xs font-bold text-white truncate">{{ auth()->user()->name ?? 'Ust. Ichsan' }}</p>
-                            <p class="text-[10px] text-emerald-300/80 truncate">Guru 3T Al-Qur'an</p>
+                            <p class="text-[10px] text-emerald-300/80 truncate">{{ auth()->user()->email }}</p>
                         </div>
                     </div>
 
@@ -197,7 +191,7 @@
 
                     <!-- Right Info Header: School Name Only -->
                     <div class="flex items-center gap-3">
-                        <span class="hidden sm:inline-flex px-4 py-1.5 rounded-full bg-emerald-50 text-emerald-900 text-xs font-extrabold border border-emerald-200/80 shadow-2xs">
+                        <span class="hidden sm:inline-flex max-w-xs truncate px-3 py-1 rounded-full bg-emerald-50 text-emerald-900 text-[11px] font-bold border border-emerald-200/80">
                             {{ $globalSchoolSetting->school_name ?? 'SMP ISLAM AL AZHAR 22 SENTRA PRIMER' }}
                         </span>
                     </div>

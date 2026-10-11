@@ -183,7 +183,7 @@
                                         {{ $rec->grade === 'C' ? 'bg-amber-50 border-amber-300 text-amber-900' : '' }}
                                         {{ $rec->grade === 'D' ? 'bg-rose-50 border-rose-300 text-rose-900' : '' }}">
                                         <span>Ayat {{ $rec->verse_number }}</span>
-                                        <span class="px-1 rounded text-[9px] font-extrabold bg-white shadow-xs">Grade {{ $rec->grade }}</span>
+                                        <span class="px-1 rounded text-[9px] font-extrabold bg-white shadow-xs">{{ $rec->grade }}</span>
                                     </div>
                                 @endforeach
                             </div>
@@ -191,23 +191,6 @@
                     @endforeach
                 </div>
             @endif
-        </div>
-
-        <!-- Share API Information Card -->
-        <div class="bg-slate-900 text-white rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-teal-500/20 text-teal-300 flex items-center justify-center font-mono font-bold text-sm">
-                    API
-                </div>
-                <div>
-                    <h4 class="font-bold text-sm text-white">Share API URL Progres Hafalan (JSON Endpoint)</h4>
-                    <p class="text-xs text-slate-400 font-mono break-all">{{ route('share.api', $student->share_token) }}</p>
-                </div>
-            </div>
-            <button onclick="navigator.clipboard.writeText('{{ route('share.api', $student->share_token) }}'); alert('URL Share API JSON berhasil disalin!')" 
-                    class="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-mono font-bold text-xs shadow transition-all flex-shrink-0">
-                ⚡ Salin URL API (JSON)
-            </button>
         </div>
 
     </main>

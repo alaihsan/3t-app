@@ -13,10 +13,7 @@
     </div>
 
     <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm space-y-6">
-        <div>
-            <h1 class="text-xl font-extrabold text-slate-900">Edit Data Murid</h1>
-            <p class="text-xs text-slate-500 mt-1">Perbarui identitas, kelas, atau program 3T murid {{ $student->name }}</p>
-        </div>
+        <h1 class="text-xl font-extrabold text-slate-900">Edit Data: {{ $student->name }}</h1>
 
         <form action="{{ route('students.update', $student->id) }}" method="POST" class="space-y-4">
             @csrf
@@ -104,15 +101,12 @@
             </div>
 
             <!-- PIN Akses Share -->
-            <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                    PIN Akses Share (Opsional)
-                </label>
+            <x-collapsible-panel trigger="PIN Akses Share (Opsional)" :open="(bool) ($student->access_pin || old('access_pin'))">
                 <input type="text" name="access_pin" value="{{ old('access_pin', $student->access_pin) }}" maxlength="20"
                        placeholder="Kosongkan untuk digenerate otomatis"
                        class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 font-mono">
                 <p class="text-[11px] text-slate-400 mt-1">PIN ini diminta saat orang tua membuka link share progres murid.</p>
-            </div>
+            </x-collapsible-panel>
 
             <!-- Submit -->
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
